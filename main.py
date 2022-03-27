@@ -1,4 +1,5 @@
 import streamlit as st
+from funciones_estadisticas import *
 
 st.set_page_config(
     page_title='Taller de Estadística',
