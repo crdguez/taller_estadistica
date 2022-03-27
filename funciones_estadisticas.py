@@ -1,7 +1,7 @@
 # from sympy import *
 import pandas as pd
 import numpy as np
-import scipy as sc
+# import scipy as sc
 import matplotlib.pyplot as plt
 
 

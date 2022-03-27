@@ -28,6 +28,11 @@ def unidimensional() :
     st.title("Estadística unidimensional")
     st.write("Aquí irá la estadística unidimensional")
 
+    dic=analisis_discreto( """16 11 17 12 10 5 1 8 10 14 15 20 10 3 8 10 2 5 12 6 16 7 6 16 10 3 3 9 4 12""")
+    st.write(dic)
+    st.dataframe(dic['tabla'])
+
+
 def agrupada() :
     st.title("Estadística agrupada")
     st.write("Aquí irá la estadística unidimensional agrupada")
