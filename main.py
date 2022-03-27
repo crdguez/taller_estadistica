@@ -1,5 +1,6 @@
 import streamlit as st
 from funciones_estadisticas import *
+import matplotlib.pyplot as plt
 
 st.set_page_config(
     page_title='Taller de Estadística',
@@ -30,8 +31,9 @@ def unidimensional() :
 
     dic=analisis_discreto( """16 11 17 12 10 5 1 8 10 14 15 20 10 3 8 10 2 5 12 6 16 7 6 16 10 3 3 9 4 12""")
     st.write(dic)
-    st.dataframe(dic['tabla'])
-
+    st.table(dic['tabla'][:-1].astype({"x_i":int, "f_i":int, "F_i":int}).style.format({'h_i':"{:,.2f}",'H_i':"{:,.2f}",'%_i':"{:,.2f}%",'%A_i':"{:,.2f}%"}))
+    st.table(dic['tabla'][-1:].astype({"x_i":int, "f_i":int, "F_i":int}).style.format({'h_i':"{:,.2f}",'H_i':"{:,.2f}",'%_i':"{:,.2f}%",'%A_i':"{:,.2f}%"}))
+    st.pyplot(dic['figure'])
 
 def agrupada() :
     st.title("Estadística agrupada")

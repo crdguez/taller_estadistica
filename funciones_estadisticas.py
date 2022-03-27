@@ -15,10 +15,11 @@ def analisis_discreto(str_datos):
     d = np.diff(np.unique(datos)).min()
     left_of_first_bin = datos.min() - float(d)/2
     right_of_last_bin = datos.max() + float(d)/2
+    fg, ax = plt.subplots()
     plt.clf()
     plt.hist(datos, np.arange(left_of_first_bin, right_of_last_bin + d, d), rwidth=0.9, cumulative = False)
-    plt.title("Diagrama")
-    fg=plt.figure
+    plt.title("Diagrama de barras")
+
 #     solucion.append({"media":datos.mean(), "mediana":np.percentile(datos,50), "moda":stats.mode(datos)})
 #     solucion.append({"P70":np.percentile(datos,70), "Q1":np.percentile(datos,25),"Q3":np.percentile(datos,75),"D4":np.percentile(datos,40),})
 #     solucion.append({"rango":np.amax(datos)-np.amin(datos), "varianza": np.var(datos), "desviación típica":sqrt(np.var(datos)), "coeficiente variación": sqrt(np.var(datos))/abs(np.mean(datos))})
