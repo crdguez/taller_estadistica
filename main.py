@@ -27,13 +27,30 @@ def intro() :
 
 def unidimensional() :
     st.title("Estadística unidimensional")
-    st.write("Aquí irá la estadística unidimensional")
+    # st.write("Aquí irá la estadística unidimensional")
 
-    dic=analisis_discreto( """16 11 17 12 10 5 1 8 10 14 15 20 10 3 8 10 2 5 12 6 16 7 6 16 10 3 3 9 4 12""")
-    st.write(dic)
-    st.table(dic['tabla'][:-1].astype({"x_i":int, "f_i":int, "F_i":int}).style.format({'h_i':"{:,.2f}",'H_i':"{:,.2f}",'%_i':"{:,.2f}%",'%A_i':"{:,.2f}%"}))
-    st.table(dic['tabla'][-1:].astype({"x_i":int, "f_i":int, "F_i":int}).style.format({'h_i':"{:,.2f}",'H_i':"{:,.2f}",'%_i':"{:,.2f}%",'%A_i':"{:,.2f}%"}))
-    st.pyplot(dic['figure'])
+    st.sidebar.markdown("""---""")
+    st.header("Datos de análisis:")
+    opciones = st.selectbox("Selecciona:", ('ejemplo1','entrada manual'),index=0)
+    if opciones == 'ejemplo1' :
+        datos = """16 11 17 12 10 5 1 8 10 14 15 20 10 3 8 10 2 5 12 6 16 7 6 16 10 3 3 9 4 12"""
+    else:
+        datos = st.text_input('Introduce los datos separados por espacios', '')
+        datos = datos.replace(',',' ')
+
+    if datos != '' :
+        dic=analisis_discreto(datos)
+        st.write("Datos:")
+        st.write(", ".join(map(str,dic['datos'])))
+
+        # st.write(dic)
+        st.subheader("Tabla de Frecuencias:")
+        dic['tabla'].index=dic['tabla'].index.astype(str)
+        st.table(dic['tabla'].astype({"x_i":int, "f_i":int, "F_i":int}).style.format({'h_i':"{:,.2f}",'H_i':"{:,.2f}",'%_i':"{:,.2f}%",'%A_i':"{:,.2f}%"}))
+        st.pyplot(dic['figure'])
+
+
+
 
 def agrupada() :
     st.title("Estadística agrupada")
