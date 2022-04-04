@@ -9,7 +9,15 @@ def analisis_discreto(str_datos):
     datos = np.loadtxt(str_datos.split())
     datos = datos.astype(int)
     #x_i, f_i, F_i, r_i  = np.unique(datos),np.bincount(datos), cumfreq(datos, numbins=len(np.unique(datos)))[0].astype(int), np.multiply(relfreq(datos, numbins=len(np.unique(datos)))[0],100)
-    tabla = pd.DataFrame({'x_i':np.unique(datos), 'f_i':np.unique(datos, return_counts=True)[1], 'F_i':np.unique(datos, return_counts=True)[1].cumsum(), 'h_i':np.unique(datos, return_counts=True)[1]/len(datos), 'H_i':(np.unique(datos, return_counts=True)[1]/len(datos)).cumsum(), '%_i':np.unique(datos, return_counts=True)[1]*100/len(datos), '%A_i':(np.unique(datos, return_counts=True)[1]*100/len(datos)).cumsum()}).set_index('x_i')
+    tabla = pd.DataFrame({'x_i':np.unique(datos), 'f_i':np.unique(datos, return_counts=True)[1], 
+                          'F_i':np.unique(datos, return_counts=True)[1].cumsum(), 
+                          'h_i':np.unique(datos, return_counts=True)[1]/len(datos), 
+                          'H_i':(np.unique(datos, return_counts=True)[1]/len(datos)).cumsum(), 
+                          '%_i':np.unique(datos, return_counts=True)[1]*100/len(datos), 
+                          '%A_i':(np.unique(datos, return_counts=True)[1]*100/len(datos)).cumsum(),
+                          'xf':np.unique(datos, return_counts=True)[0]*np.unique(datos, return_counts=True)[1]
+                         }
+                        ).set_index('x_i')
     tabla.reset_index(inplace=True)
     tabla.loc['suma']=tabla.sum()
     d = np.diff(np.unique(datos)).min()
