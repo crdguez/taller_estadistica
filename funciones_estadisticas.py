@@ -15,7 +15,8 @@ def analisis_discreto(str_datos):
                           'H_i':(np.unique(datos, return_counts=True)[1]/len(datos)).cumsum(), 
                           '%_i':np.unique(datos, return_counts=True)[1]*100/len(datos), 
                           '%A_i':(np.unique(datos, return_counts=True)[1]*100/len(datos)).cumsum(),
-                          'xf':np.unique(datos, return_counts=True)[0]*np.unique(datos, return_counts=True)[1]
+                          'xf':np.unique(datos, return_counts=True)[0]*np.unique(datos, return_counts=True)[1],
+                          'x2f':np.unique(datos, return_counts=True)[0]**2*np.unique(datos, return_counts=True)[1],
                          }
                         ).set_index('x_i')
     tabla.reset_index(inplace=True)
