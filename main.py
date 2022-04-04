@@ -46,7 +46,7 @@ def unidimensional() :
         # st.write(dic)
         st.subheader("Tabla de Frecuencias:")
         dic['tabla'].index=dic['tabla'].index.astype(str)
-        st.table(dic['tabla'].astype({"x_i":int, "f_i":int, "F_i":int}).style.format({'h_i':"{:,.2f}",'H_i':"{:,.2f}",'%_i':"{:,.2f}%",'%A_i':"{:,.2f}%"}))
+        st.table(dic['tabla'].astype({"x_i":int, "f_i":int, "F_i":int}).style.format({'h_i':"{:,.2f}",'H_i':"{:,.2f}",'%_i':"{:,.2f}%",'%A_i':"{:,.2f}%",'xf':"{:,.2f}%"}))
         st.pyplot(dic['figure'])
 
 
