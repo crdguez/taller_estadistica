@@ -37,7 +37,6 @@ def unidimensional() :
     else:
         datos = st.text_input('Introduce los datos separados por espacios', '')
         datos = datos.replace(',',' ')
-
     if datos != '' :
         dic=analisis_discreto(datos)
         st.write("Datos:")
@@ -46,8 +45,20 @@ def unidimensional() :
         # st.write(dic)
         st.subheader("Tabla de Frecuencias:")
         dic['tabla'].index=dic['tabla'].index.astype(str)
-        st.table(dic['tabla'].astype({"x_i":int, "f_i":int, "F_i":int}).style.format({'h_i':"{:,.2f}",'H_i':"{:,.2f}",'%_i':"{:,.2f}%",'%A_i':"{:,.2f}%",'xf':"{:,.2f}",'x2f':"{:,.2f}"}))
+        st.table(dic['tabla'].astype({"x_i":int,
+            "f_i":int,"F_i":int}).style.format({'h_i':"{:,.2f}",
+            'H_i':"{:,.2f}",'%_i':"{:,.2f}%",
+            '%A_i':"{:,.2f}%",'xf':"{:,.2f}",
+            'x2f':"{:,.2f}"}))
         st.pyplot(dic['figure'])
+        st.subheader('Parámetros de centralización:')
+        tabla=dic['tabla']
+        media=r'$\overline{x}=\dfrac{\Sigma{x_i f_i}}{N}=' \
+            +r'\dfrac{'+ str(tabla.iloc[:-1,7].sum()) \
+            +r'}{'+str(tabla.iloc[:-1,1].sum())+r'}='+ \
+            str(tabla.iloc[:-1,7].sum()/tabla.iloc[:-1,1].sum())+r'$'
+        st.markdown('* Media: {} \
+            \n * Moda:{}'.format(media, dic['datos'].mean()))
 
 
 
