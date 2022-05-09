@@ -93,7 +93,7 @@ def agrupada() :
     st.sidebar.markdown("""---""")
     st.warning(':fire: En construccion :fire:')
     st.header("Datos de análisis:")
-    opciones = st.selectbox("Selecciona:", ('ejemplo1','entrada manual', 'entrada manual por intervalos'),index=0)
+    opciones = st.selectbox("Selecciona:", ('ejemplo1','ejemplo2','entrada manual', 'entrada manual por intervalos'),index=0)
     if opciones == 'ejemplo1' :
         st_datos = """174 157 168 166 169 168 173 184 176 171 172 168 167 162 162 163
                 166 166 167 167 174 159 170 172 173 164 161 163 176 177"""
@@ -103,6 +103,14 @@ def agrupada() :
         # rango=(155,185)
         n_intervalos=st.slider('Número de intervalos',2,10,value=3,step=1)
         frecs, intervalos, intervalos_latex = agrupar_por_intervalos(datos,n_intervalos)
+
+    elif opciones == 'ejemplo2' :
+        st_intervalos = '15 23 31 39 47 55 63 71 79 87'
+        st_frecs = '3 4 5 8 10 12 15 12 6'
+        intervalos = np.loadtxt(st_intervalos.split())
+        intervalos_latex="$"+r", ".join([latex(Interval.Ropen(intervalos[i],intervalos[i+1])) for i in range(len(intervalos)-1)])+"$"
+        frecs=np.loadtxt(st_frecs.split()).astype(int)
+        n_intervalos=len(frecs)
 
     elif opciones == 'entrada manual' :
         st_datos = st.text_input('Introduce los datos separados por espacios', '')
@@ -114,15 +122,15 @@ def agrupada() :
     else:
         st_intervalos = st.text_input('Introduce la lista de límites de los intervalos:', '')
         st_intervalos = st_intervalos.replace(',',' ')
-        intervalos = np.loadtxt(st_intervalos.split())
-        intervalos_latex="$"+r", ".join([latex(Interval.Ropen(intervalos[i],intervalos[i+1])) for i in range(len(intervalos)-1)])+"$"
-        n_intervalos=len(intervalos)-1
-        # st.write(n_intervalos)
-        st.write(intervalos_latex)
         if st_intervalos != '' :
+            intervalos = np.loadtxt(st_intervalos.split())
+            intervalos_latex="$"+r", ".join([latex(Interval.Ropen(intervalos[i],intervalos[i+1])) for i in range(len(intervalos)-1)])+"$"
+            n_intervalos=len(intervalos)-1
+            # st.write(n_intervalos)
+            st.write(intervalos_latex)
             st_frecs = st.text_input('Introduce las frecuencias:', '')
             st_frecs = st_frecs.replace(',',' ')
-            frecs=np.loadtxt(st_frecs.split())
+            frecs=np.loadtxt(st_frecs.split()).astype(int)
             if len(intervalos) != len(frecs) + 1 :
                 st.write("Reecuerda que tiene que haber un dato menos que la lista de intervalos")
             else :
@@ -135,18 +143,19 @@ def agrupada() :
         dic=analisis_agrupado(frecs, intervalos)
         st.write("**Datos agrupados:**")
         st.write(dic)
-        st.write(np.cumsum(dic['frecs']))
-        st.write((intervalos[:-1]+intervalos[1:])/2)
+
+        st.write(frecs)
+        st.write(intervalos)
+
+        # st.write((intervalos[:-1]+intervalos[1:])/2)
         # st.write(", ".join(map(str,datos)))
         # st.write("**Intervalos:**")
         # st.write(intervalos_latex)
         #
         # # st.write(dic)
-        col1, col2 = st.columns(2)
 
-        with col1 :
-            st.subheader("Tabla de Frecuencias:")
-            dic['tabla'].index=dic['tabla'].index.astype(str)
+        st.subheader("Tabla de Frecuencias:")
+        dic['tabla'].index=dic['tabla'].index.astype(str)
         #     tabla_formateada=dic['tabla'].astype({"x_i":int,
         #         "f_i":int,"F_i":int}).style.format({'h_i':"{:,.2f}",
         #         'H_i':"{:,.2f}",'%_i':"{:,.2f}%",
@@ -155,15 +164,40 @@ def agrupada() :
             # tabla_formateada=dic['tabla']
         #     # tabla_formateada.rename(columns={'x_i':r'$x^2$'}, inplace = True)
         #     st.table(tabla_formateada)
-            st.table(dic['tabla'])
+        st.table(dic['tabla'])
 
         #     # st.dataframe(tabla_formateada)
         #     # st.latex(tabla_formateada.to_latex())
-        with col2 :
-            st.write('Aquí irá el Diagrama')
-        #     st.pyplot(dic['figure'])
-        #
+
+        st.write('Histograma')
+        st.pyplot(dic['figure'])
+
+
+
         st.subheader('Parámetros de centralización:')
+        st.write('Media:')
+        st.write(str(dic['media']))
+        st.write('Intervalo modal:')
+        st.write(dic['intervalo_modal'])
+        st.write('Moda:')
+        st.write(dic['moda'])
+        st.write('Intervalo Mediana:')
+        st.write(dic['intervalo_mediana'])
+        st.write('Mediana:')
+        st.write(dic['mediana'])
+
+
+        st.subheader('Parámetros de dispersión:')
+        st.write('Desviación típica:')
+        st.write(str(dic['desviacion']))
+
+        st.subheader('Porcentaje de la distribución de datos menor que un valor')
+        st.write('Valor de la distribución:')
+        st.write(str(intervalos.max()))
+        # v=st.slider('Selecciona valor:',intervalos.min()[0], intervalos.max())
+        v=st.slider('Selecciona valor:',float(str(intervalos.min())), float(str(intervalos.max())))
+
+
         # # tabla=dic['tabla']
         # # media=r'$\overline{x}=\dfrac{\Sigma{x_i f_i}}{N}=' \
         # #     +r'\dfrac{'+ str(tabla.iloc[:-1,7].sum()) \

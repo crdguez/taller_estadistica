@@ -32,23 +32,38 @@ def analisis_agrupado(frecs=[], intervalos=[]):
                         'f_i':frecs,
                         'F_i':np.cumsum(frecs),
                         'h_i':frecs/np.sum(frecs),
-                        # 'H_i':(np.unique(datos, return_counts=True)[1]/len(datos)).cumsum(),
-    #                       # '%_i':np.unique(datos, return_counts=True)[1]*100/len(datos),
-    #                       # '%A_i':(np.unique(datos, return_counts=True)[1]*100/len(datos)).cumsum(),
-    #                       # 'xf':np.unique(datos, return_counts=True)[0]*np.unique(datos, return_counts=True)[1],
-    #                       # 'x2f':np.unique(datos, return_counts=True)[0]**2*np.unique(datos, return_counts=True)[1],
+                        'H_i':np.cumsum(frecs)/np.sum(frecs),
+                        '%_i':frecs*100/np.sum(frecs),
+                        '%A_i':np.cumsum(frecs)*100/np.sum(frecs),
+                        'xf':(intervalos[:-1]+intervalos[1:])/2*frecs,
+                        'x2f':((intervalos[:-1]+intervalos[1:])/2)**2*frecs,
                          }
                          )
-                        # ).set_index('x_i')
-    # tabla.reset_index(inplace=True)
-    # tabla.loc['suma']=tabla.sum()
+                        # ).set_index('x_i').reset_index(inplace=True)
+    tabla.loc['suma']=tabla.sum()
+
+
     # d = np.diff(np.unique(datos)).min()
-    # left_of_first_bin = datos.min() - float(d)/2
-    # right_of_last_bin = datos.max() + float(d)/2
-    # fg, ax = plt.subplots()
-    # plt.clf()
+    # left_of_first_bin = tabla[:-1]['L_i'].min()
+    #
+    # right_of_last_bin = tabla[:-1]['R_i'].max()
+    # d=(right_of_last_bin-left_of_first_bin)/len(intervalos)
+    fg, ax = plt.subplots()
+    plt.clf()
+
+    # plt.bar([1,2,3], [1,4,6])
+
+
+    # plt.barh(xx, yy)
+    # xx = tabla['x_i'][:-1]
+    # yy = tabla['f_i'][:-1]
+    # plt.barh(yy, xx)
+    # plt.show()
+
     # plt.hist(datos, np.arange(left_of_first_bin, right_of_last_bin + d, d), rwidth=0.9, cumulative = False)
-    # plt.title("Diagrama de barras")
+    # plt.hist([np.repeat(intervalos,frecs)], intervalos )
+    plt.hist(np.repeat((intervalos[:-1]+intervalos[1:])/2,frecs), intervalos, rwidth=0.99 )
+    plt.title("Histograma")
 
     dic=dict()
     dic['frecs']=frecs
@@ -57,12 +72,31 @@ def analisis_agrupado(frecs=[], intervalos=[]):
     # dic['datos']=datos
     dic['tabla']=tabla
     # dic['media']=datos.mean()
-    # dic['figure']=fg
+    dic['figure']=fg
+    dic['media']=tabla.iloc[:-1,9].sum()/tabla.iloc[:-1,3].sum()
+
+
+    t=tabla[:-1]
+    indice_modal=t['f_i'].idxmax()
+    f=t.iloc[indice_modal]
+    dic['intervalo_modal']=f
+    fa=t.iloc[indice_modal-1]
+    fp=t.iloc[indice_modal+1]
+    # fila_intervalo_modal=tabla.iloc[tabla.iloc[:-1]['f_i'].idxmax()]
+    dic['moda']=str(f['L_i']+(f['f_i']-fa['f_i'])*(f['R_i']-f['L_i'])/((f['f_i']-fa['f_i'])+f['f_i']-fp['f_i']))
+
+
+    k=50
+    N=t['f_i'].sum()
+    f=t.where(t['F_i']/t['f_i'].sum()>=k/100).dropna().iloc[0]
+    dic['intervalo_mediana']=f
+    dic['mediana']=str(f['L_i']+(f['R_i']-f['L_i'])*(k*N/100-(f['F_i']-f['f_i']))/f['f_i'])
+
     # dic['moda']= tabla[:-1].iloc[tabla[:-1]['f_i'].idxmax(),:]['x_i']
     # dic['mediana']=percentil(tabla[:-1],50)
     # dic['rango']=tabla[:-1]['x_i'].max()-tabla[:-1]['x_i'].min()
-    # dic['varianza']=(tabla[-1:]['x2f'][0]/tabla[-1:]['f_i'][0]-dic['media']**2)
-    # dic['desviacion']=sqrt(dic['varianza'])
+    dic['varianza']=(tabla[-1:]['x2f'][0]/tabla[-1:]['f_i'][0]-dic['media']**2)
+    dic['desviacion']=sqrt(dic['varianza'])
     # dic['texto_media'] = r' $\overline{x}=\dfrac{\Sigma{x_i f_i}}{N}=' \
     #     +r'\dfrac{'+ str(tabla.iloc[:-1,7].sum()) \
     #     +r'}{'+str(tabla.iloc[:-1,1].sum())+r'}='+ \
