@@ -174,7 +174,7 @@ def  analisis_bidimensional(datos, var1='x', var2='y'):
     tabla2.loc['Sumas']=tabla2.sum()
     tabla2.loc['Medias']=tabla2.iloc[:-1].mean()
 
-    tabla2=tabla2.applymap(lambda x: int(x) if isinstance(x, float) and x.is_integer() else round(x, 2))
+    tabla2=tabla2.applymap(lambda x: int(x) if isinstance(x, (float, np.floating)) and x.is_integer() else round(x, 2))
 
     # Medias
     m1, m2 = [tabla2.loc[tabla2.index[-2]][c]/numero_datos for c in range(2)]
