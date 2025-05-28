@@ -222,7 +222,8 @@ def  analisis_bidimensional(datos, var1='x', var2='y'):
     p=plot_implicit(recta, ('x',tabla['x'].min()*0.6,tabla['x'].max()*1.3), ('y',tabla['y'].min()*0.6,tabla['y'].max()*1.3),axis_center=(0,0))
 
     fg, ax = p._backend.fig, p._backend.ax
-    ax[0].set_title("$y="+latex(nsimplify(pendiente*S('x')+ordenada))+"$  \n ")
+    # ax[0].set_title("$y="+latex(nsimplify(pendiente*S('x')+ordenada))+"$  \n ")
+    ax.set_title("$y="+latex(nsimplify(pendiente*S('x')+ordenada))+"$  \n ")
     # ax[0].set_aspect('equal')
     plt.scatter(tabla['x'],tabla['y'])
     plt.grid(True)
