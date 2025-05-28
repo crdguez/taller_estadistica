@@ -161,3 +161,88 @@ def analisis_discreto(str_datos):
         +str(dic['media'])+'^2}'+'=' \
         +str(sqrt((tabla[-1:]['x2f'][0]/tabla[-1:]['f_i'][0]-dic['media']**2)))+r'$'
     return  dic
+
+
+def  analisis_bidimensional(datos, var1='x', var2='y'):
+#     Recibe un numpy array de datos con dos columnas, la primera la interpreta como x y la segunda como y. Devuelve un diccionario con la información del análisis de regresión
+
+    tabla = pd.DataFrame({var1: datos[:,0], var2: datos[:,1]})
+    numero_datos=tabla.shape[0]
+
+    tabla2 =tabla
+    tabla2=tabla2.join(pd.DataFrame({'$'+var1+r'\cdot '+var2+r'$':datos[:,0]*datos[:,1],r'$'+var1+r'^2$':datos[:,0]**2, r'$'+var2+r'^2$':datos[:,1]**2}))
+    tabla2.loc['Sumas']=tabla2.sum()
+    tabla2.loc['Medias']=tabla2.iloc[:-1].mean()
+    tabla2
+
+    # Medias
+    m1, m2 = [tabla2.loc[tabla2.index[-2]][c]/numero_datos for c in range(2)]
+    medias=[m1,m2]
+
+    vari =[var1, var2]
+
+    latex_medias =r'Medias: '
+    for c in range(2) :
+        latex_medias += r"$\overline{"+tabla.columns[c]+r"}=\dfrac{\Sigma{"+vari[c]+r"_i}}{N}="+ \
+        r"\dfrac{"+str(tabla2.loc[tabla2.index[-2]][c])+ \
+        r"}{"+latex(numero_datos)+r"}="+latex(tabla2.loc[tabla2.index[-2]][c]/numero_datos)+"$. "
+
+    latex_centro = r'El centro de gravedad es: $('+latex(m1)+r','+latex(m2)+')$'
+
+    # Desviaciones típicas y covarianza
+    s1, s2 = [sqrt(tabla2.loc[tabla2.index[-2]][c+3]/numero_datos-medias[c]**2) for c in range(2)]
+    sxy=tabla2.loc[tabla2.index[-2]][2]/numero_datos-m1*m2
+#     display(s1,s2,sxy)
+
+    latex_varianzas = r'Varianzas y covarianzas: '+ \
+    r' $\sigma_'+var1+r'=\sqrt{\frac{\sum{'+var1+r'_i^2}}{N}-\overline{'+var1+r'}^2}=\sqrt{\frac{'+latex(tabla2.loc[tabla2.index[-2]][3])+r'}{'+ \
+    latex(numero_datos)+r'}-'+latex(medias[0])+r'^2}='+latex(s1)+r'$.' + \
+    r' $\sigma_'+var2+r'=\sqrt{\frac{\sum{'+var2+r'_i^2}}{N}-\overline{'+var2+r'}^2}=\sqrt{\frac{'+latex(tabla2.loc[tabla2.index[-2]][4])+r'}{'+ \
+    latex(numero_datos)+r'}-'+latex(medias[1])+r'^2}='+latex(s2)+r'$.'+ \
+    r' $\sigma_{'+var1+var2+r'}=\frac{\sum{'+var1+r'_i \cdot '+var2+r'_i}}{N}-\overline{'+var1+r'}\cdot \overline{'+var2+r'}=\frac{'+latex(tabla2.loc[tabla2.index[-2]][2])+r'}{'+ \
+    latex(numero_datos)+r'}-'+latex(medias[0])+r'\cdot '+latex(medias[1])+r'='+latex(sxy)+r'$.'
+
+
+    latex_correlacion = r'Correlación: '+ \
+    r'$r=\dfrac{\sigma_{'+var1+var2+r'}}{\sigma_'+var1+r' \cdot \sigma_'+var2+r'}=\dfrac{'+latex(sxy)+r'}{'+ \
+    latex(s1)+r'\cdot '+latex(s2)+r'}='+latex(sxy/(s1*s2))+r'$.'
+#
+#     pendiente, ordenada, coefcorr = stats.linregress(datos)[:3]
+# #   display(pendiente, ordenada, coefcorr, Eq(y,pendiente*x+ordenada))
+#
+
+    pendiente = sxy/s1**2
+    ordenada = m2-m1*sxy/s1**2
+    recta= Eq(S('y'),pendiente*S('x')+ordenada)
+    latex_recta = r'Recta de regresión: La pendiente es: '+latex(pendiente)+r', la ordenada en el origen: '+latex(ordenada) \
+                +r', El coeficiente de correlación:'+latex(sxy/(s1*s2)) \
+                +r' y la recta de regresión: $'+latex(recta)+r'$'
+
+    # p=plot_implicit(Eq(y,exp), (x, -10, 10), (y, -10, 10))
+    p=plot_implicit(recta, ('x',tabla['x'].min()*0.6,tabla['x'].max()*1.3), ('y',tabla['y'].min()*0.6,tabla['y'].max()*1.3),axis_center=(0,0))
+
+    fg, ax = p._backend.fig, p._backend.ax
+    ax[0].set_title("$y="+latex(nsimplify(pendiente*S('x')+ordenada))+"$  \n ")
+    # ax[0].set_aspect('equal')
+    plt.scatter(tabla['x'],tabla['y'])
+    plt.grid(True)
+
+    dic=dict()
+
+    dic['datos']=datos
+    dic['tabla_ini']=tabla
+    # dic['tabla_ini_latex']=tabulate(tabla, headers="keys", tablefmt="latex",showindex = False).replace('\\$','$').replace('textbackslash{}','')
+    # dic['tabla_fin_latex']=tabulate(tabla2, headers="keys", tablefmt="latex",showindex = True).replace('\\$','$').replace('textbackslash{}','').replace('\^{}','^')
+    tabla2.index = tabla2.index.map(str)
+    dic['tabla_fin']=tabla2.style.highlight_max(axis=0)
+    dic['latex_medias']=latex_medias
+    dic['latex_centro']=latex_centro
+    dic['latex_varianzas']=latex_varianzas
+    dic['latex_correlacion']=latex_correlacion
+    dic['latex_recta']=latex_recta
+    dic['recta']=recta
+    dic['fg']=fg
+    # dic['latex']=latex_sol
+    # dic['figura']=sns.regplot(x=datos[:,0],y=datos[:,1]).figure
+
+    return dic

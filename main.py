@@ -1,6 +1,8 @@
 import streamlit as st
 from funciones_estadisticas import *
 import matplotlib.pyplot as plt
+# import numpy as np
+# from scipy import stats
 
 st.set_page_config(
     page_title='Taller de Estadística',
@@ -195,34 +197,49 @@ def agrupada() :
         st.write('Valor de la distribución:')
         st.write(str(intervalos.max()))
         # v=st.slider('Selecciona valor:',intervalos.min()[0], intervalos.max())
-        v=st.slider('Selecciona valor:',float(str(intervalos.min())), float(str(intervalos.max())))
+        v=st.slider('Selecciona valor:',float(str(intervalos.min())), float(str(intervalos.max())),step=1.0)
+        tabla=dic['tabla'][:-1]
+        t = tabla.where(tabla['R_i']>=v).dropna()
+        st.write(t.iloc[0])
+        N=tabla['f_i'].sum()
+        # st.write(N)
+        L, f, F_1, c = t.iloc[0]['L_i'], t.iloc[0]['f_i'], t.iloc[0]['F_i']-t.iloc[0]['f_i'], t.iloc[0]['R_i']-t.iloc[0]['L_i']
+        porcentaje= ((v-L)*f/c+F_1)*100/N
+        st.write(porcentaje)
 
-
-        # # tabla=dic['tabla']
-        # # media=r'$\overline{x}=\dfrac{\Sigma{x_i f_i}}{N}=' \
-        # #     +r'\dfrac{'+ str(tabla.iloc[:-1,7].sum()) \
-        # #     +r'}{'+str(tabla.iloc[:-1,1].sum())+r'}='+ \
-        # #     str(tabla.iloc[:-1,7].sum()/tabla.iloc[:-1,1].sum())+r'$'
-        # st.markdown('* Media: {} \
-        #     \n * Moda:{} \
-        #     \n * Mediana: {} \
-        #     '.format(dic['texto_media'], dic['texto_moda'], \
-        #     dic['texto_mediana'],))
-        # st.subheader('Párametros de posición')
-        # # st.markdown('**Percentiles**')
-        # k=st.slider('Selecciona percentil:',0,100,value=50,step=5)
-        # st.write('Percentil $P_{'+str(k)+'}$= '+str(percentil(dic['tabla'][:-1],k)))
-        # kk=st.radio('Selecciona cuartil: ',(25,50,75),format_func= lambda x: 'Q'+str(int(x/25)))
-        # st.write('Cuartil Q'+str(int(kk/25))+'='+str(percentil(dic['tabla'][:-1],kk)))
-        # st.subheader('Párametros de dispersión')
-        # st.write('Rango: '+str(dic['rango']))
-        # # st.write('Desviación: '+str(dic['desviacion']))
-        # st.write('Desviación típica:  '+dic['texto_desviacion'])
-        # st.write('Varianza:  $Var='+str(dic['desviacion'])+'^2='+str(dic['varianza'])+'$')
 
 def bidimensional() :
     st.title("Estadística bidimensinal y regresión lineal")
-    st.write("Aquí irá la estadística unidimensional agrupada")
+    st.header("Datos de análisis:")
+    opciones = st.selectbox("Selecciona:", ('ejemplo1','entrada manual'),index=0)
+    if opciones == 'ejemplo1' :
+        datos_brutos = "5 3 2 4 1 3 6 2 5 4 5 4 2 4 2 5 5 4 4 5"
+    else:
+        datos_brutos = st.text_input('Introduce los datos separados por espacios', '')
+        datos_brutos = datos_brutos.replace(',',' ')
+    if datos_brutos != '' :
+        datos=datos_brutos.split(' ')
+        datos=np.array(list(map(float, datos))).reshape(2,int(len(datos)/2)).transpose()
+
+        dic=analisis_bidimensional(datos)
+        st.write("Datos:")
+        st.write(datos_brutos)
+        # st.write(", ".join(map(str,dic['datos'])))
+        tabla_ini=dic['tabla_ini']
+        st.table(tabla_ini)
+        st.table(dic['tabla_fin'])
+        st.write(dic['latex_medias'])
+        st.write(dic['latex_centro'])
+        st.write(dic['latex_varianzas'])
+        st.write(dic['latex_correlacion'])
+        st.write(dic['latex_recta'])
+        st.pyplot(dic['fg'])
+        st.subheader('Estimación de valores:')
+
+        xx = st.slider('Seleccion el valor de la x:', min_value=int(tabla_ini['x'].min()*0.6), max_value=int(tabla_ini['x'].max()*1.3), step=1)
+
+        st.write('El valor estimado para x='+str(xx)+' es: ' + str(dic['recta'].args[1].subs('x',xx)))
+
 
 # Menú lateral
 
