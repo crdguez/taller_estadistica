@@ -240,7 +240,7 @@ def  analisis_bidimensional(datos, var1='x', var2='y'):
     f"{int(v)}" if isinstance(v, (int, float)) and v == int(v) and df.index.name != 'Medias'
     else f"{v:.1f}" if df.index.get_loc(v.name) == df.index.get_loc('Medias')
     else f"{v:.2f}"
-))highlight_max(axis=0)
+)).highlight_max(axis=0)
     dic['latex_medias']=latex_medias
     dic['latex_centro']=latex_centro
     dic['latex_varianzas']=latex_varianzas
