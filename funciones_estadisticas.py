@@ -232,7 +232,7 @@ def  analisis_bidimensional(datos, var1='x', var2='y'):
     dic=dict()
 
     dic['datos']=datos
-    dic['tabla_ini']=tabla
+    dic['tabla_ini']=tabla.applymap(lambda x: int(x) if x == int(x) else round(x, 2))
     # dic['tabla_ini_latex']=tabulate(tabla, headers="keys", tablefmt="latex",showindex = False).replace('\\$','$').replace('textbackslash{}','')
     # dic['tabla_fin_latex']=tabulate(tabla2, headers="keys", tablefmt="latex",showindex = True).replace('\\$','$').replace('textbackslash{}','').replace('\^{}','^')
     tabla2.index = tabla2.index.map(str)
