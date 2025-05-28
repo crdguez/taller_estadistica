@@ -173,7 +173,8 @@ def  analisis_bidimensional(datos, var1='x', var2='y'):
     tabla2=tabla2.join(pd.DataFrame({'$'+var1+r'\cdot '+var2+r'$':datos[:,0]*datos[:,1],r'$'+var1+r'^2$':datos[:,0]**2, r'$'+var2+r'^2$':datos[:,1]**2}))
     tabla2.loc['Sumas']=tabla2.sum()
     tabla2.loc['Medias']=tabla2.iloc[:-1].mean()
-    tabla2
+    
+    tabla2 = tabla2.applymap(lambda x: int(x) if x == int(x) else round(x, 2))
 
     # Medias
     m1, m2 = [tabla2.loc[tabla2.index[-2]][c]/numero_datos for c in range(2)]
