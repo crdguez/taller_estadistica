@@ -170,7 +170,7 @@ def  analisis_bidimensional(datos, var1='x', var2='y'):
     numero_datos=tabla.shape[0]
 
     tabla2 =tabla
-    tabla2=tabla2.join(pd.DataFrame({'$'+var1+r'\cdot '+var2+r'$':datos[:,0]*datos[:,1],r'$'+var1+r'^2$':datos[:,0]**2, r'$'+var2+r'^2$':datos[:,1]**2})).applymap(lambda x: int(x) if x == int(x) else round(x, 2))
+    tabla2=tabla2.join(pd.DataFrame({'$'+var1+r'\cdot '+var2+r'$':datos[:,0]*datos[:,1],r'$'+var1+r'^2$':datos[:,0]**2, r'$'+var2+r'^2$':datos[:,1]**2}))
     tabla2.loc['Sumas']=tabla2.sum()
     tabla2.loc['Medias']=tabla2.iloc[:-1].mean()
 
